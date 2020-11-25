@@ -21,7 +21,6 @@ Array.from(numberButtons).forEach(item => {
         if (display.textContent.startsWith('0')) display.textContent = '';
         display.textContent += item.textContent;
         numbers[n].push(parseInt(item.id));
-        console.log(numbers);
     })
 });
 
@@ -33,29 +32,48 @@ Array.from(operatorButtons).forEach(item => {
         display.textContent += item.textContent;
         operators.push(item.id);
         n++;
-        console.log(operators);
     })
 })
 
 clear.addEventListener('click', () => {
     display.textContent = 0;
     result = 0;
+    result1 = 0;
+    result2 = 0;
     numbers = [];
+    for (let i = 0; i < 100; i++) {
+        numbers[i] = [];
+    }
+    n = 0;
     operators = [];
 })
 
 equal.addEventListener('click', () => {
-    for (let i = 0; i < numbers[0].length; i++) {
-        result1 += numbers[0][i] * 10 ** (numbers[0].length - 1 - i);
-    }
-    for (let i = 0; i < numbers[1].length; i++) {
-        result2 += numbers[1][i] * 10 ** (numbers[1].length - 1 - i);
-    }
-    operator = operators[0];
-    result = result1 * result2;
+    handleResult();
     display.textContent = result;
-    result = 0;
-    numbers = [];
-    operators = [];
 })
 
+function handleResult() {
+    for (let i = 0; i < numbers.length; i++) {
+        handleValidOperators();
+        (i > 0) ? result1 = result : result1 = parseInt(numbers[i].join(''));
+        if (numbers[i + 1]) { result2 = parseInt(numbers[i + 1].join('')) }
+        else break;
+        operator = operators[i];
+        switch (operator) {
+            case "+": result = result1 + result2; break;
+            case "*": result = result1 * result2; break;
+            case "/": result = result1 / result2; break;
+            case "-": result = result1 - result2; break;
+        }
+
+    }
+}
+
+function handleValidOperators() {
+    numbersValid = numbers.filter(item => item.length);
+    if (operators.length >= numbersValid.length) {
+        result = "ERROR";
+        return false;
+    }
+}
